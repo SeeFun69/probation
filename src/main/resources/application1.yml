@@ -1,0 +1,38 @@
+##DataSource,RabbitMQ,Redis Configuration
+#spring:
+#  datasource:
+#    driver-class-name:  com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/probation
+#    username: root
+#    password: root
+#  rabbitmq:
+#    host: localhost
+#    port: 5672
+#    username: guest
+#    password: guest
+#  redis:
+#    host: localhost
+#    port: 6379
+#    jedis:
+#      pool:
+#        max-active: 1024
+#        max-wait: -1s
+#        max-idle: 200
+#    password: 123456
+#
+## JPA Configuration
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#      naming:
+#        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+#    show-sql: true
+#    defer-datasource-initialization: true
+#
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.MySQL5Dialect
+#        format_sql : true
+#
+#server:
+#  port: 9191

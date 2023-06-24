@@ -9,19 +9,15 @@ import javax.persistence.*;
 
 @Entity
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "product")
-@RedisHash("product")
-public class Product {
+@AllArgsConstructor
+@Table(name = "stock")
+@RedisHash("stock")
+public class Stock {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private String description;
-    private String productType;
-    private int quantity;
-    private double price;
-    private String supplierName;
+    private Long stock;
 }
