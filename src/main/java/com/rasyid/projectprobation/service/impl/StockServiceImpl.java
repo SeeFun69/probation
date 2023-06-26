@@ -1,8 +1,13 @@
 package com.rasyid.projectprobation.service.impl;
 
 import com.rasyid.projectprobation.base.mapper.StockMapper;
+import com.rasyid.projectprobation.dto.StockRequestDTO;
+import com.rasyid.projectprobation.dto.StockResponseDTO;
 import com.rasyid.projectprobation.entity.Stock;
+import com.rasyid.projectprobation.exception.BusinessException;
 import com.rasyid.projectprobation.service.StockService;
+import com.rasyid.projectprobation.util.ValueMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -11,6 +16,7 @@ import tk.mybatis.mapper.entity.Example;
 import java.util.List;
 
 @Service
+@Slf4j
 public class StockServiceImpl implements StockService {
 
     @Autowired
@@ -39,5 +45,23 @@ public class StockServiceImpl implements StockService {
             return stocks. get(0). getStock().intValue();
         }
         return 0;
+    }
+
+    @Override
+    public StockResponseDTO createStock(StockRequestDTO stockRequestDto) throws BusinessException {
+        StockResponseDTO stockResponseDTO;
+        try {
+            log.info("StockService: createStock");
+            Stock stock = ValueMapper.convertToEntity(stockRequestDto);
+            log.debug("Stock: createStock {}", ValueMapper.jsonAsString(stockRequestDto));
+
+            Stock result = stockMapper.insert(stock);
+            stockResponseDTO = ValueMapper.convertToDTO(result);
+            log.debug("Stock: createStock {}", ValueMapper.jsonAsString(stockRequestDto));
+        } catch (Exception ex) {
+            log.error("Exception occurred while persisting stock to database , Exception message {}", ex.getMessage());
+            throw new BusinessException("Exception occurred while create a new product");
+        }
+        return stockResponseDTO;
     }
 }

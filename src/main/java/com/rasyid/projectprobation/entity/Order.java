@@ -12,7 +12,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "t_order")
-@RedisHash("t_order")
 public class Order {
 
     @Id

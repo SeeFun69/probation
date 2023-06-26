@@ -21,7 +21,6 @@ public class Product {
     private String name;
     private String description;
     private String productType;
-    private int quantity;
     private double price;
     private String supplierName;
 }

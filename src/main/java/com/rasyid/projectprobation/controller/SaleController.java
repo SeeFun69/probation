@@ -66,31 +66,31 @@ public class SaleController {
      * @param stockName
      * @return
      */
-//    @RequestMapping("/saleDataBase")
-//    @ResponseBody
-//    public String secDataBase(@RequestParam(value = "username") String username, @RequestParam(value = "stockName") String stockName) {
-//        log.info("The participants of the flash sale include...: {}，The items available for the flash sale are...: {}", username, stockName);
-//        String message = null;
-//        //查找该商品库存
-//        Integer stockCount = stockService.selectByExample(stockName);
-//        log.info("User: {} Participate in flash sale，The product's current stock level is...: {}", username, stockCount);
-//        if (stockCount > 0) {
-//            /**
-//             * There is remaining stock, allowing you to proceed with the flash sale. Reduce the inventory by one and make a purchase
-//             */
-//            //1、Reduce the stock by one
-//            stockService.decrByStock(stockName);
-//            //2、Place an order
-//            Order order = new Order();
-//            order.setOrder_user(username);
-//            order.setOrder_name(stockName);
-//            orderService.createOrder(order);
-//            log.info("User: {}.The result of participating in the flash sale is: successful", username);
-//            message = username + " The result of participating in the flash sale is: success";
-//        } else {
-//            log.info("User: {}.The result of participating in the flash sale is: the flash sale has ended", username);
-//            message = username + " The result of participating in the flash sale is: the flash sale has ended";
-//        }
-//        return message;
-//    }
+    @RequestMapping("/saleDataBase")
+    @ResponseBody
+    public String secDataBase(@RequestParam(value = "username") String username, @RequestParam(value = "stockName") String stockName) {
+        log.info("The participants of the flash sale include...: {}，The items available for the flash sale are...: {}", username, stockName);
+        String message = null;
+        //查找该商品库存
+        Integer stockCount = stockService.selectByExample(stockName);
+        log.info("User: {} Participate in flash sale，The product's current stock level is...: {}", username, stockCount);
+        if (stockCount > 0) {
+            /**
+             * There is remaining stock, allowing you to proceed with the flash sale. Reduce the inventory by one and make a purchase
+             */
+            //1、Reduce the stock by one
+            stockService.decrByStock(stockName);
+            //2、Place an order
+            Order order = new Order();
+            order.setOrder_user(username);
+            order.setOrder_name(stockName);
+            orderService.createOrder(order);
+            log.info("User: {}.The result of participating in the flash sale is: successful", username);
+            message = username + " The result of participating in the flash sale is: success";
+        } else {
+            log.info("User: {}.The result of participating in the flash sale is: the flash sale has ended", username);
+            message = username + " The result of participating in the flash sale is: the flash sale has ended";
+        }
+        return message;
+    }
 }

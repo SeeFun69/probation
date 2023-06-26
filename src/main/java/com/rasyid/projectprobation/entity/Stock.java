@@ -12,7 +12,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "stock")
-@RedisHash("stock")
 public class Stock {
 
     @Id
