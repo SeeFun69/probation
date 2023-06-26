@@ -24,6 +24,6 @@ public class ProjectProbationApplication implements ApplicationRunner {
 	 */
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
-		redisService.put("watch", 10, 20);
+		redisService.put("watch", 10, 10);
 	}
 }

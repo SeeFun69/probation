@@ -22,8 +22,8 @@ public class StockServiceImpl implements StockService {
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("name", stockName);
         List<Stock> stocks = stockMapper.selectByExample(example);
-        if (!CollectionUtils. isEmpty(stocks)) {
-            Stock stock = stocks. get(0);
+        if (!CollectionUtils.isEmpty(stocks)) {
+            Stock stock = stocks.get(0);
             stock.setStock(stock.getStock() - 1);
             stockMapper.updateByPrimaryKey(stock);
         }
@@ -35,8 +35,8 @@ public class StockServiceImpl implements StockService {
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("name", stockName);
         List<Stock> stocks = stockMapper.selectByExample(example);
-        if (!CollectionUtils. isEmpty(stocks)) {
-            return stocks. get(0). getStock(). intValue();
+        if (!CollectionUtils.isEmpty(stocks)) {
+            return stocks. get(0). getStock().intValue();
         }
         return 0;
     }
