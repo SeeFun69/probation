@@ -7,15 +7,17 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class StockRequestDTO {
-    @NotBlank(message = "product name shouldn't be NULL OR EMPTY")
+public class StockDTO {
+    @NotBlank(message = "stock name shouldn't be NULL OR EMPTY")
     private String name;
 
     @Min(value = 1,message = "quantity is not defined !")
-    private Long stock;
+    @NotNull(message = "quantity can not null")
+    private Integer stock;
 }

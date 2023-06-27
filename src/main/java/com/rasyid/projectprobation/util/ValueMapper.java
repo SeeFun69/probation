@@ -2,21 +2,20 @@ package com.rasyid.projectprobation.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rasyid.projectprobation.dto.StockRequestDTO;
-import com.rasyid.projectprobation.dto.StockResponseDTO;
+import com.rasyid.projectprobation.dto.StockDTO;
 import com.rasyid.projectprobation.entity.Stock;
 
 public class ValueMapper {
 
-    public static Stock convertToEntity(StockRequestDTO stockRequest){
+    public static Stock convertToEntity(StockDTO stockRequest){
         Stock stock = new Stock();
         stock.setName(stockRequest.getName());
         stock.setStock(stockRequest.getStock());
         return stock;
     }
 
-    public static StockResponseDTO convertToDTO(Stock stock){
-        StockResponseDTO response = new StockResponseDTO();
+    public static StockDTO convertToDTO(Stock stock){
+        StockDTO response = new StockDTO();
         response.setName(stock.getName());
         response.setStock(stock.getStock());
         return response;

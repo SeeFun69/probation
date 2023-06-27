@@ -18,5 +18,5 @@ public class Stock {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private Long stock;
+    private Integer stock;
 }

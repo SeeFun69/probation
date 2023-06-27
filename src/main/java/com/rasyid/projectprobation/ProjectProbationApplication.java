@@ -10,20 +10,9 @@ import tk.mybatis.spring.annotation.MapperScan;
 
 @SpringBootApplication
 @MapperScan("com.rasyid.projectprobation.base.mapper")
-public class ProjectProbationApplication implements ApplicationRunner {
+public class ProjectProbationApplication{
 
 	public static void main(String[] args) {
 		SpringApplication.run(ProjectProbationApplication.class, args);
-	}
-	@Autowired
-	private RedisService redisService;
-	/**
-	 * Initialize the inventory quantity and information of the product in Redis
-	 * @param args
-	 * @throws Exception
-	 */
-	@Override
-	public void run(ApplicationArguments args) throws Exception {
-		redisService.put("watch", 10, 10);
 	}
 }

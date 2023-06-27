@@ -1,6 +1,8 @@
 package com.rasyid.projectprobation.controller;
 
 import com.rasyid.projectprobation.config.MyRabbitMQConfig;
+import com.rasyid.projectprobation.dto.APIResponse;
+import com.rasyid.projectprobation.dto.StockDTO;
 import com.rasyid.projectprobation.entity.Order;
 import com.rasyid.projectprobation.service.OrderService;
 import com.rasyid.projectprobation.service.RedisService;
@@ -8,6 +10,8 @@ import com.rasyid.projectprobation.service.StockService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,6 +25,9 @@ public class SaleController {
     private OrderService orderService;
     @Autowired
     private StockService stockService;
+
+    public static final String SUCCESS = "Success";
+
     /**
      * Implementing the flash sale feature using Redis and message queues.
      *
@@ -30,7 +37,7 @@ public class SaleController {
      */
     @PostMapping(value = "/sale",produces = "application/json;charset=utf-8")
     @ResponseBody
-    public String sale(@RequestParam(value = "username") String username, @RequestParam(value = "stockName") String stockName) {
+    public ResponseEntity<?> sale(@RequestParam(value = "username") String username, @RequestParam(value = "stockName") String stockName) {
 
         log.info("The users participating in the flash sale are：{}，The product being limited-time sale is：{}", username, stockName);
         String message = null;
@@ -57,7 +64,14 @@ public class SaleController {
             log.info("User: {} There is no remaining inventory for the product during the flash sale, and the flash sale has ended", username);
             message = "User: "+ username + " There is no remaining inventory for the product, and the flash sale has ended";
         }
-        return message;
+
+        APIResponse<?> responseDTO = APIResponse
+                .builder()
+                .status(SUCCESS)
+                .results(message)
+                .build();
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
 
     /**

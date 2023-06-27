@@ -1,7 +1,6 @@
 package com.rasyid.projectprobation.service;
 
-import com.rasyid.projectprobation.dto.StockRequestDTO;
-import com.rasyid.projectprobation.dto.StockResponseDTO;
+import com.rasyid.projectprobation.dto.StockDTO;
 
 public interface StockService {
 
@@ -9,5 +8,5 @@ public interface StockService {
 
     Integer selectByExample(String stockName);
 
-    StockResponseDTO createStock(StockRequestDTO stockRequestDto);
+    StockDTO createStock(StockDTO stockDto);
 }

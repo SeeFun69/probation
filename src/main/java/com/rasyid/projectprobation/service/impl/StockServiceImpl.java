@@ -1,8 +1,7 @@
 package com.rasyid.projectprobation.service.impl;
 
 import com.rasyid.projectprobation.base.mapper.StockMapper;
-import com.rasyid.projectprobation.dto.StockRequestDTO;
-import com.rasyid.projectprobation.dto.StockResponseDTO;
+import com.rasyid.projectprobation.dto.StockDTO;
 import com.rasyid.projectprobation.entity.Stock;
 import com.rasyid.projectprobation.exception.BusinessException;
 import com.rasyid.projectprobation.service.StockService;
@@ -48,19 +47,21 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public StockResponseDTO createStock(StockRequestDTO stockRequestDto) throws BusinessException {
-        StockResponseDTO stockResponseDTO;
+    public StockDTO createStock(StockDTO stockDto) throws BusinessException {
+        StockDTO stockResponseDTO;
         try {
             log.info("StockService: createStock");
-            Stock stock = ValueMapper.convertToEntity(stockRequestDto);
-            log.debug("Stock: createStock {}", ValueMapper.jsonAsString(stockRequestDto));
+            Stock stock = ValueMapper.convertToEntity(stockDto);
+            log.debug("Stock: createStock {}", ValueMapper.jsonAsString(stockDto));
 
-            Stock result = stockMapper.insert(stock);
-            stockResponseDTO = ValueMapper.convertToDTO(result);
-            log.debug("Stock: createStock {}", ValueMapper.jsonAsString(stockRequestDto));
+            stockMapper.insertStock(stock);
+            Long id = stock.getId();
+
+            stockResponseDTO = stockMapper.findById(id);
+            log.debug("Stock: createStock {}", ValueMapper.jsonAsString(stockDto));
         } catch (Exception ex) {
             log.error("Exception occurred while persisting stock to database , Exception message {}", ex.getMessage());
-            throw new BusinessException("Exception occurred while create a new product");
+            throw new BusinessException("Exception occurred while create a new stock");
         }
         return stockResponseDTO;
     }
