@@ -75,7 +75,7 @@ public class SaleController {
     }
 
     /**
-     * 实现纯数据库操作实现秒杀操作
+     * Implementing a pure database operation for the flash sale functionality
      * @param username
      * @param stockName
      * @return
