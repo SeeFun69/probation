@@ -1,0 +1,53 @@
+#DataSource,RabbitMQ,Redis Configuration
+spring:
+  datasource:
+    driver-class-name:  com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/probation
+    username: root
+    password: root
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  redis:
+    host: localhost
+    port: 6379
+    jedis:
+      pool:
+        max-active: 1024
+        max-wait: -1s
+        max-idle: 200
+    password: 123456
+
+# JPA Configuration
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
+    defer-datasource-initialization: true
+
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+        format_sql : true
+
+
+twilio:
+  ACCOUNT_SID: AC20ecf275089dff3860656809a4561197
+  AUTH_TOKEN: 515c97bdd6d92fcab4d38842669e6510
+  PHONE_NUMBER: +14178923913
+
+
+application:
+  security:
+    jwt:
+      secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      expiration: 86400000 # a day
+      refresh-token:
+        expiration: 604800000 # 7 days
+
+server:
+  port: 9191

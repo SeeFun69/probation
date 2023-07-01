@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/api/v1/auth")
 @Slf4j
 public class SaleController {
     @Autowired
@@ -85,7 +86,7 @@ public class SaleController {
     public String secDataBase(@RequestParam(value = "username") String username, @RequestParam(value = "stockName") String stockName) {
         log.info("The participants of the flash sale include...: {}，The items available for the flash sale are...: {}", username, stockName);
         String message = null;
-        //查找该商品库存
+        //To find the inventory of the product
         Integer stockCount = stockService.selectByExample(stockName);
         log.info("User: {} Participate in flash sale，The product's current stock level is...: {}", username, stockCount);
         if (stockCount > 0) {
