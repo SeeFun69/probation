@@ -6,7 +6,7 @@ public interface StockService {
 
     void decrByStock(String stockName);
 
-    Integer selectByExample(String stockName);
+    Integer selectStockByName(String stockName);
 
     StockDTO createStock(StockDTO stockDto);
 }

@@ -23,27 +23,12 @@ public class StockServiceImpl implements StockService {
 
     @Override
     public void decrByStock(String stockName) {
-        Example example = new Example(Stock. class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("name", stockName);
-        List<Stock> stocks = stockMapper.selectByExample(example);
-        if (!CollectionUtils.isEmpty(stocks)) {
-            Stock stock = stocks.get(0);
-            stock.setStock(stock.getStock() - 1);
-            stockMapper.updateByPrimaryKey(stock);
-        }
+        stockMapper.updateStockByStockName(stockName);
     }
 
     @Override
-    public Integer selectByExample(String stockName) {
-        Example example = new Example(Stock. class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("name", stockName);
-        List<Stock> stocks = stockMapper.selectByExample(example);
-        if (!CollectionUtils.isEmpty(stocks)) {
-            return stocks. get(0). getStock().intValue();
-        }
-        return 0;
+    public Integer selectStockByName(String stockName) {
+        return stockMapper.selectStockByName(stockName);
     }
 
     @Override

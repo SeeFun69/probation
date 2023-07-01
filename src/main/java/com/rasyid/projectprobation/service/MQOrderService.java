@@ -19,7 +19,7 @@ public class MQOrderService {
      */
     @RabbitListener(queues = MyRabbitMQConfig.ORDER_QUEUE)
     public void createOrder(Order order) {
-        log.info("Received the order message, the order user is: {}, the product name is: {}", order.getOrder_user(), order.getOrder_name());
+        log.info("Received the order message, the order user is: {}, the product name is: {}", order.getOrderUser(), order.getOrderName());
         /**
          * Call the database orderService to create order information
          */

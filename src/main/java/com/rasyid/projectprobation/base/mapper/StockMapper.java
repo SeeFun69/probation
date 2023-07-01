@@ -16,4 +16,10 @@ public interface StockMapper extends GenericMapper<Stock> {
     @SelectKey(statement = "SELECT LAST_INSERT_ID()", keyProperty = "id", before = false, resultType = Long.class)
     @Select("SELECT * FROM stock WHERE id = #{id}")
     StockDTO findById(Long id);
+
+    @Update("UPDATE stock SET stock = stock - 1 WHERE name = #{stockName}")
+    void updateStockByStockName(@Param("stockName") String stockName);
+
+    @Select("SELECT stock FROM stock WHERE name = #{stockName}")
+    Integer selectStockByName(@Param("stockName") String stockName);
 }

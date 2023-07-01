@@ -3,15 +3,14 @@ package com.rasyid.projectprobation.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.redis.core.RedisHash;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
-@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "stock")
+@Entity
 public class Stock {
 
     @Id

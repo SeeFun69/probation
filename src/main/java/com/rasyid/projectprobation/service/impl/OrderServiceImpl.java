@@ -12,6 +12,6 @@ public class OrderServiceImpl implements OrderService {
     private OrderMapper orderMapper;
     @Override
     public void createOrder(Order order) {
-        orderMapper.insert(order);
+        orderMapper.insertOrder(order);
     }
 }

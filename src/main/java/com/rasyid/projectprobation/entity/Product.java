@@ -5,14 +5,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.redis.core.RedisHash;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
-@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "product")
 @RedisHash("product")
+@Entity
 public class Product {
 
     @Id

@@ -22,19 +22,19 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest request) {
-    User user = User.builder()
+    var user = User.builder()
             .firstname(request.getFirstname())
             .lastname(request.getLastname())
             .email(request.getEmail())
             .password(passwordEncoder.encode(request.getPassword()))
             .role(request.getRole())
             .build();
-    userMapper.insert(user);
-    String jwtToken = jwtService.generateToken(user);
+    userMapper.insertUser(user);
+    var jwtToken = jwtService.generateToken(user);
     return AuthenticationResponse.builder()
             .accessToken(jwtToken)
             .build();
-}
+    }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
