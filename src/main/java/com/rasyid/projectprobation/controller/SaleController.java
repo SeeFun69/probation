@@ -13,16 +13,14 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
 @Slf4j
 public class SaleController {
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
-    @Autowired
-    private RedisService redisService;
     @Autowired
     private OrderService orderService;
     @Autowired
@@ -36,31 +34,10 @@ public class SaleController {
      */
     @PostMapping("/sale")
     @ResponseBody
-    public ResponseEntity<?> sale(@RequestBody FlashSaleReq request) {
+    public ResponseEntity<APIResponse> sale(@RequestBody FlashSaleReq request, @AuthenticationPrincipal UserDetails userDetails) {
 
-        log.info("The users participating in the flash sale are：{}，The product being limited-time sale is：{}", request.getUsername(), request.getStockname());
-        String message = null;
-        //Send a message to the inventory message queue, reducing the inventory data by one.
-        Long decrByResult = redisService.decrBy(request.getStockname());
-        if (decrByResult >= 0) {
-            /**
-             * This signifies that there is still available stock for this item, allowing you to proceed with your purchase.
-             */
-            log.info("Users: {}, Quickly sell this item: {}, There is stock, You can proceed to place your order", request.getUsername(), request.getStockname());
-            //Send a message to the inventory queue to reduce the inventory count by one
-            rabbitTemplate.convertAndSend(MyRabbitMQConfig.STORY_EXCHANGE, MyRabbitMQConfig.STORY_ROUTING_KEY, request.getStockname());
-
-            //Send a message to the order queue to create an order
-            Order order = ValueMapper.convertToEntity(request);
-            rabbitTemplate.convertAndSend(MyRabbitMQConfig.ORDER_EXCHANGE, MyRabbitMQConfig.ORDER_ROUTING_KEY, order);
-            message = "User " + request.getUsername() + " flash sale " + request.getStockname() + " Success";
-        } else {
-            /**
-             * Notify the user that the product is out of stock and inform them of the unsuccessful flash sale attempt
-             */
-            log.info("User: {} There is no remaining inventory for the product during the flash sale, and the flash sale has ended", request.getUsername());
-            message = "User: "+ request.getUsername() + " There is no remaining inventory for the product, and the flash sale has ended";
-        }
+        String username = userDetails.getUsername();
+        String message = orderService.flashSale(request, username);
 
         APIResponse<?> responseDTO = APIResponse
                 .builder()
@@ -77,12 +54,13 @@ public class SaleController {
      */
     @PostMapping("/saleDataBase")
     @ResponseBody
-    public String secDataBase(@RequestBody FlashSaleReq request) {
-        log.info("The participants of the flash sale include...: {}，The items available for the flash sale are...: {}", request.getUsername(), request.getStockname());
+    public String saleDataBase(@RequestBody FlashSaleReq request, @AuthenticationPrincipal UserDetails userDetails) {
+        String username = userDetails.getUsername();
+        log.info("The participants of the flash sale include...: {}，The items available for the flash sale are...: {}", username, request.getStockname());
         String message = null;
         //To find the inventory of the product
         Integer stockCount = stockService.selectStockByName(request.getStockname());
-        log.info("User: {} Participate in flash sale，The product's current stock level is...: {}", request.getUsername(), stockCount);
+        log.info("User: {} Participate in flash sale，The product's current stock level is...: {}", username, stockCount);
         if (stockCount > 0) {
             /**
              * There is remaining stock, allowing you to proceed with the flash sale. Reduce the inventory by one and make a purchase
@@ -93,13 +71,13 @@ public class SaleController {
 //            Order order = new Order();
 //            order.setOrderName(request.getStockname());
 //            order.setOrderUser(request.getUsername());
-            Order order = ValueMapper.convertToEntity(request);
+            Order order = ValueMapper.convertToEntity(request, username);
             orderService.createOrder(order);
-            log.info("User: {}.The result of participating in the flash sale is: successful", request.getUsername());
-            message = request.getUsername() + " The result of participating in the flash sale is: success";
+            log.info("User: {}.The result of participating in the flash sale is: successful", username);
+            message = username + " The result of participating in the flash sale is: success";
         } else {
-            log.info("User: {}.The result of participating in the flash sale is: the flash sale has ended", request.getUsername());
-            message = request.getUsername() + " The result of participating in the flash sale is: the flash sale has ended";
+            log.info("User: {}.The result of participating in the flash sale is: the flash sale has ended", username);
+            message = username + " The result of participating in the flash sale is: the flash sale has ended";
         }
         return message;
     }

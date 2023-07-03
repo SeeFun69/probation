@@ -9,6 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
@@ -18,7 +19,9 @@ import java.util.List;
 @AllArgsConstructor
 @Table(name = "user")
 @Entity
-public class User implements UserDetails {
+public class User implements UserDetails, Serializable {
+
+    private static final long serialVersionUID = -1493353692987299768L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

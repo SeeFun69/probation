@@ -10,19 +10,19 @@ import org.springframework.context.annotation.Configuration;
 public class MyRabbitMQConfig {
 
     //Inventory Exchange
-    public static final String STORY_EXCHANGE = "STORY_EXCHANGE";
+    public static final String STOCK_EXCHANGE = "STOCK_EXCHANGE";
 
     //Order Exchange
     public static final String ORDER_EXCHANGE = "ORDER_EXCHANGE";
 
-    //Story Queue
-    public static final String STORY_QUEUE = "STORY_QUEUE";
+    //Stock Queue
+    public static final String STOCK_QUEUE = "STOCK_QUEUE";
 
     //Order Queue
     public static final String ORDER_QUEUE = "ORDER_QUEUE";
 
-    //Story Routing Key
-    public static final String STORY_ROUTING_KEY = "STORY_ROUTING_KEY";
+    //Stock Routing Key
+    public static final String STOCK_ROUTING_KEY = "STOCK_ROUTING_KEY";
 
     //Order Routing Key
     public static final String ORDER_ROUTING_KEY = "ORDER_ROUTING_KEY";
@@ -31,22 +31,22 @@ public class MyRabbitMQConfig {
         return new Jackson2JsonMessageConverter();
     }
 
-    //Create Story Exchange
+    //Create Stock Exchange
     @Bean
-    public Exchange getStoryExchange() {
-        return ExchangeBuilder.directExchange(STORY_EXCHANGE).durable(true).build();
+    public Exchange getStockExchange() {
+        return ExchangeBuilder.directExchange(STOCK_EXCHANGE).durable(true).build();
     }
 
-    //Create Story Queue
+    //Create Stock Queue
     @Bean
-    public Queue getStoryQueue() {
-        return new Queue(STORY_QUEUE);
+    public Queue getStockQueue() {
+        return new Queue(STOCK_QUEUE);
     }
 
-    //Bind Story Exchange and Story Queue
+    //Bind Stock Exchange and Stock Queue
     @Bean
-    public Binding bindStory() {
-        return BindingBuilder.bind(getStoryQueue()).to(getStoryExchange()).with(STORY_ROUTING_KEY).noargs();
+    public Binding bindStock() {
+        return BindingBuilder.bind(getStockQueue()).to(getStockExchange()).with(STOCK_ROUTING_KEY).noargs();
     }
 
     //Create Order Queue

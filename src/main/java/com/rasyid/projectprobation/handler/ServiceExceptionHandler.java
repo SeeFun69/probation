@@ -38,4 +38,13 @@ public class ServiceExceptionHandler {
         serviceResponse.setErrors(Collections.singletonList(new ErrorDTO("", exception.getMessage())));
         return serviceResponse;
     }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public APIResponse<?> handleGeneralException(Exception e){
+        APIResponse<?> serviceResponse = new APIResponse<>();
+        serviceResponse.setStatus("FAILED");
+        serviceResponse.setErrors(Collections.singletonList(new ErrorDTO("", e.getMessage())));
+        return serviceResponse;
+    }
 }

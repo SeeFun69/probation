@@ -16,9 +16,9 @@ public class ValueMapper {
         return stock;
     }
 
-    public static Order convertToEntity(FlashSaleReq req){
+    public static Order convertToEntity(FlashSaleReq req, String username){
         Order order = new Order();
-        order.setOrderUser(req.getUsername());
+        order.setOrderUser(username);
         order.setOrderName(req.getStockname());
         return order;
     }

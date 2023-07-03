@@ -1,12 +1,14 @@
 package com.rasyid.projectprobation.service.impl;
 
 import com.rasyid.projectprobation.base.mapper.StockMapper;
+import com.rasyid.projectprobation.config.MyRabbitMQConfig;
 import com.rasyid.projectprobation.dto.StockDTO;
 import com.rasyid.projectprobation.entity.Stock;
 import com.rasyid.projectprobation.exception.BusinessException;
 import com.rasyid.projectprobation.service.StockService;
 import com.rasyid.projectprobation.util.ValueMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -20,6 +22,8 @@ public class StockServiceImpl implements StockService {
 
     @Autowired
     private StockMapper stockMapper;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     @Override
     public void decrByStock(String stockName) {

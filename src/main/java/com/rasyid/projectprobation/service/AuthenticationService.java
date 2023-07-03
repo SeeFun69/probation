@@ -29,6 +29,9 @@ public class AuthenticationService {
             .password(passwordEncoder.encode(request.getPassword()))
             .role(request.getRole())
             .build();
+        if(request.getRole() == null){
+            user.setRole(Role.USER);
+        }
     userMapper.insertUser(user);
     var jwtToken = jwtService.generateToken(user);
     return AuthenticationResponse.builder()

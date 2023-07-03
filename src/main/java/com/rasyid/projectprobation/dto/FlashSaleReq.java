@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class FlashSaleReq {
-    @NotBlank(message = "stock name shouldn't be NULL OR EMPTY")
-    private String username;
+//    @NotBlank(message = "stock name shouldn't be NULL OR EMPTY")
+//    private String username;
 
     @NotBlank(message = "stock name shouldn't be NULL OR EMPTY")
     private String stockname;
