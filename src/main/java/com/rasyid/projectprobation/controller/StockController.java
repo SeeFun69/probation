@@ -2,15 +2,19 @@ package com.rasyid.projectprobation.controller;
 
 import com.rasyid.projectprobation.config.MyRabbitMQConfig;
 import com.rasyid.projectprobation.dto.APIResponse;
+import com.rasyid.projectprobation.dto.SmsRequest;
 import com.rasyid.projectprobation.dto.StockDTO;
 import com.rasyid.projectprobation.entity.Stock;
 import com.rasyid.projectprobation.service.RedisService;
+import com.rasyid.projectprobation.service.SmsService;
 import com.rasyid.projectprobation.service.StockService;
 import com.rasyid.projectprobation.util.ValueMapper;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,18 +22,16 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/v1/stock")
 @Slf4j
+@RequiredArgsConstructor
 public class StockController {
 
-    @Autowired
-    private StockService stockService;
+    private final StockService stockService;
 
-    @Autowired
-    private RedisService redisService;
+    private final RedisService redisService;
 
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
+    private final RabbitTemplate rabbitTemplate;
 
     public static final String SUCCESS = "Success";
 
@@ -47,7 +49,6 @@ public class StockController {
                 .build();
 
         log.info("StockController::createNewStock response {}", ValueMapper.jsonAsString(responseDTO));
-
         return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
 
@@ -61,11 +62,11 @@ public class StockController {
                 .results(getStocks)
                 .build();
 
-        log.info("StockController::createNewStock response {}", ValueMapper.jsonAsString(responseDTO));
+        log.info("StockController::GetAllStock response {}", ValueMapper.jsonAsString(responseDTO));
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
-    @PostMapping("/flash/sale")
+    @PostMapping("/flash/sale/begin")
     public ResponseEntity<?> flashSale(@RequestBody StockDTO stockDTO){
         redisService.put(stockDTO.getName(), stockDTO.getStock(), 10);
         APIResponse<?> responseDTO = APIResponse
@@ -73,6 +74,8 @@ public class StockController {
                 .status(SUCCESS)
                 .results("Flash Sale Begin")
                 .build();
+
+        log.info("StockController {}", responseDTO);
         return new ResponseEntity<>(responseDTO,HttpStatus.CREATED);
     }
 }

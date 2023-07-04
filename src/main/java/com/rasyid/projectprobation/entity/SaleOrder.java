@@ -11,9 +11,8 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "t_order")
 @Entity
-public class Order implements Serializable {
+public class SaleOrder implements Serializable {
 
     private static final long serialVersionUID = -2531642437810646502L;
 

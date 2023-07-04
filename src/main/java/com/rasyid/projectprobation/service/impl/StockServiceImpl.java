@@ -6,10 +6,13 @@ import com.rasyid.projectprobation.entity.Stock;
 import com.rasyid.projectprobation.exception.BusinessException;
 import com.rasyid.projectprobation.service.StockService;
 import com.rasyid.projectprobation.util.ValueMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.Collections;
 import java.util.List;
@@ -17,17 +20,31 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class StockServiceImpl implements StockService {
 
-    @Autowired
-    private StockMapper stockMapper;
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
+
+    private final StockMapper stockMapper;
+
+    private final RabbitTemplate rabbitTemplate;
 
     @Override
     public void decrByStock(String stockName) {
         stockMapper.updateStockByStockName(stockName);
     }
+
+//    @Override
+//    public void decrByStock(String stockName) {
+//        Example example = new Example(Stock. class);
+//        Example.Criteria criteria = example.createCriteria();
+//        criteria.andEqualTo("name", stockName);
+//        List<Stock> stocks = stockMapper.selectByExample(example);
+//        if (!CollectionUtils.isEmpty(stocks)) {
+//            Stock stock = stocks.get(0);
+//            stock.setStock(stock.getStock() - 1);
+//            stockMapper.updateByPrimaryKey(stock);
+//        }
+//    }
 
     @Override
     public Integer selectStockByName(String stockName) {
@@ -60,13 +77,14 @@ public class StockServiceImpl implements StockService {
         try {
             List<Stock> listStock = stockMapper.selectAll();
             if (!listStock.isEmpty()){
-                stockDTOList = listStock.stream().map(ValueMapper::convertToDTO).collect(Collectors.toList());
+                stockDTOList = listStock.stream().map(ValueMapper::convertToStockDTO).collect(Collectors.toList());
+            } else {
+                stockDTOList = Collections.emptyList();
             }
-            stockDTOList = Collections.emptyList();
             log.debug("StockService:getStock retrieving stock from database  {}", ValueMapper.jsonAsString(stockDTOList));
 
-        } catch (Exception ex) {
-            log.error("Exception occurred while persisting stock to database , Exception message {}", ex.getMessage());
+        } catch (Exception e) {
+            log.error("Exception occurred while persisting stock to database , Exception message {}", e.getMessage());
             throw new BusinessException("Exception occurred while fetch all stock from database");
         }
 

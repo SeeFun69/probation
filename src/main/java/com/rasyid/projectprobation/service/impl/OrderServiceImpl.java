@@ -3,28 +3,39 @@ package com.rasyid.projectprobation.service.impl;
 import com.rasyid.projectprobation.base.mapper.OrderMapper;
 import com.rasyid.projectprobation.config.MyRabbitMQConfig;
 import com.rasyid.projectprobation.dto.FlashSaleReq;
-import com.rasyid.projectprobation.entity.Order;
+import com.rasyid.projectprobation.dto.OrderDTO;
+import com.rasyid.projectprobation.entity.SaleOrder;
+import com.rasyid.projectprobation.exception.BusinessException;
 import com.rasyid.projectprobation.service.OrderService;
 import com.rasyid.projectprobation.service.RedisService;
+import com.rasyid.projectprobation.service.StockService;
 import com.rasyid.projectprobation.util.ValueMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
-    @Autowired
-    private OrderMapper orderMapper;
-    @Autowired
-    private RedisService redisService;
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
+
+    private final OrderMapper orderMapper;
+
+    private final RedisService redisService;
+
+    private final RabbitTemplate rabbitTemplate;
+
+    private final StockService stockService;
 
     @Override
-    public void createOrder(Order order) {
-        orderMapper.insertOrder(order);
+    public void createOrder(SaleOrder saleOrder) {
+        orderMapper.insertOrder(saleOrder);
     }
 
     @Override
@@ -42,8 +53,8 @@ public class OrderServiceImpl implements OrderService {
             rabbitTemplate.convertAndSend(MyRabbitMQConfig.STOCK_EXCHANGE, MyRabbitMQConfig.STOCK_ROUTING_KEY, request.getStockname());
 
             //Send a message to the order queue to create an order
-            Order order = ValueMapper.convertToEntity(request, username);
-            rabbitTemplate.convertAndSend(MyRabbitMQConfig.ORDER_EXCHANGE, MyRabbitMQConfig.ORDER_ROUTING_KEY, order);
+            SaleOrder saleOrder = ValueMapper.convertToEntity(request, username);
+            rabbitTemplate.convertAndSend(MyRabbitMQConfig.ORDER_EXCHANGE, MyRabbitMQConfig.ORDER_ROUTING_KEY, saleOrder);
             message = "User " + username + " flash sale " + request.getStockname() + " Success";
         } else {
             /**
@@ -53,5 +64,48 @@ public class OrderServiceImpl implements OrderService {
             message = "User: "+ username + " There is no remaining inventory for the product, and the flash sale has ended";
         }
         return message;
+    }
+
+    @Override
+    public String saleReguler(FlashSaleReq request, String username) {
+        log.info("The participants of the flash sale include...: {}，The items available for the flash sale are...: {}", username, request.getStockname());
+        String message = null;
+        //To find the inventory of the product
+        Integer stockCount = stockService.selectStockByName(request.getStockname());
+        log.info("User: {} Participate in flash sale，The product's current stock level is...: {}", username, stockCount);
+        if (stockCount > 0) {
+            /**
+             * There is remaining stock, allowing you to proceed with the flash sale. Reduce the inventory by one and make a purchase
+             */
+            //1、Reduce the stock by one
+            stockService.decrByStock(request.getStockname());
+            //2、Place an order
+            SaleOrder saleOrder = ValueMapper.convertToEntity(request, username);
+           createOrder(saleOrder);
+            log.info("User: {}.The result of participating in the flash sale is: successful", username);
+            message = username + " The result of participating in the flash sale is: success";
+        } else {
+            log.info("User: {}.The result of participating in the flash sale is: the flash sale has ended", username);
+            message = username + " The result of participating in the flash sale is: the flash sale has ended";
+        }
+        return message;
+    }
+
+    @Override
+    public List<OrderDTO> getAllOrder() {
+        List<OrderDTO> orderDTOList = null;
+        try {
+            List<SaleOrder> saleOrderList = orderMapper.selectAll();
+            if (!saleOrderList.isEmpty()) {
+                orderDTOList = saleOrderList.stream().map(ValueMapper::convertToOrderDTO).collect(Collectors.toList());
+            } else {
+                orderDTOList = Collections.emptyList();
+            }
+            log.debug("OrderService:getOrder retrieving order from database  {}", ValueMapper.jsonAsString(orderDTOList));
+        } catch (Exception e) {
+            log.error("Exception occurred while persisting stock to database , Exception message {}", e.getMessage());
+            throw new BusinessException("Exception occurred while fetch all order from database");
+        }
+        return orderDTOList;
     }
 }

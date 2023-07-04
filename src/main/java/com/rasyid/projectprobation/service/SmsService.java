@@ -7,14 +7,16 @@ import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.rest.api.v2010.account.MessageCreator;
 import com.twilio.type.PhoneNumber;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
 @Service
+@RequiredArgsConstructor
 public class SmsService {
-    @Autowired
-    TwilioInfo twilioInfo;
+
+    private final TwilioInfo twilioInfo;
 
     @PostConstruct
     public void initTwilio() {
