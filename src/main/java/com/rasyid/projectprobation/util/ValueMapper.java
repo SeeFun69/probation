@@ -1,12 +1,17 @@
 package com.rasyid.projectprobation.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rasyid.projectprobation.dto.FlashSaleReq;
 import com.rasyid.projectprobation.dto.OrderDTO;
 import com.rasyid.projectprobation.dto.StockDTO;
 import com.rasyid.projectprobation.entity.SaleOrder;
 import com.rasyid.projectprobation.entity.Stock;
+import io.jsonwebtoken.io.IOException;
+
+import java.util.List;
 
 public class ValueMapper {
 
@@ -36,6 +41,20 @@ public class ValueMapper {
         response.setOrderName(saleOrder.getOrderName());
         response.setOrderUser(saleOrder.getOrderUser());
         return response;
+    }
+
+    public static List<SaleOrder> parseOrdersFromJson(String jsonData) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.readValue(jsonData, new TypeReference<List<SaleOrder>>() {});
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } catch (JsonMappingException e) {
+            throw new RuntimeException(e);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static String jsonAsString(Object obj){

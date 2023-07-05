@@ -13,16 +13,21 @@ import com.rasyid.projectprobation.util.ValueMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@EnableScheduling
 public class OrderServiceImpl implements OrderService {
 
     private final OrderMapper orderMapper;
@@ -32,6 +37,8 @@ public class OrderServiceImpl implements OrderService {
     private final RabbitTemplate rabbitTemplate;
 
     private final StockService stockService;
+
+    private final RedisConnectionFactory redisConnectionFactory;
 
     @Override
     public void createOrder(SaleOrder saleOrder) {
@@ -94,12 +101,16 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderDTO> getAllOrder() {
         List<OrderDTO> orderDTOList = null;
-        try {
-            List<SaleOrder> saleOrderList = orderMapper.selectAll();
-            if (!saleOrderList.isEmpty()) {
-                orderDTOList = saleOrderList.stream().map(ValueMapper::convertToOrderDTO).collect(Collectors.toList());
+        try (RedisConnection jedisConnection = redisConnectionFactory.getConnection()) {
+//            List<SaleOrder> saleOrderList = orderMapper.selectAll();
+            byte[] jsonData = jedisConnection.get("all_orders".getBytes());
+            if (jsonData != null) {
+                List<SaleOrder> listOrder = ValueMapper.parseOrdersFromJson(new String(jsonData));
+                orderDTOList = convertToOrderDTOList(listOrder);
             } else {
-                orderDTOList = Collections.emptyList();
+                List<SaleOrder> listOrder = orderMapper.selectAll();
+                orderDTOList = convertToOrderDTOList(listOrder);
+                saveOrdersToRedis(listOrder);
             }
             log.debug("OrderService:getOrder retrieving order from database  {}", ValueMapper.jsonAsString(orderDTOList));
         } catch (Exception e) {
@@ -107,5 +118,33 @@ public class OrderServiceImpl implements OrderService {
             throw new BusinessException("Exception occurred while fetch all order from database");
         }
         return orderDTOList;
+    }
+
+    @Scheduled(fixedRate = 5, timeUnit = TimeUnit.MINUTES) //
+    public void updateDataInRedis() {
+        List<SaleOrder> listOrder = orderMapper.selectAll();
+        if(listOrder.isEmpty()) {
+            log.info("Order is empty");
+        } else {
+            log.info("Stock: updateFromDatabases {}", listOrder);
+            saveOrdersToRedis(listOrder);
+        }
+    }
+
+    private List<OrderDTO> convertToOrderDTOList(List<SaleOrder> orderList) {
+        if (!orderList.isEmpty()) {
+            return orderList.stream()
+                    .map(ValueMapper::convertToOrderDTO)
+                    .collect(Collectors.toList());
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    private void saveOrdersToRedis(List<SaleOrder> orders) {
+        try (RedisConnection jedisConnection = redisConnectionFactory.getConnection()) {
+            byte[] jsonData = ValueMapper.jsonAsString(orders).getBytes();
+            jedisConnection.setEx("all_orders".getBytes(), 300, jsonData);
+        }
     }
 }

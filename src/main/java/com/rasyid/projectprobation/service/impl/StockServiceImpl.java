@@ -9,10 +9,7 @@ import com.rasyid.projectprobation.util.ValueMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-import tk.mybatis.mapper.entity.Example;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,19 +29,6 @@ public class StockServiceImpl implements StockService {
     public void decrByStock(String stockName) {
         stockMapper.updateStockByStockName(stockName);
     }
-
-//    @Override
-//    public void decrByStock(String stockName) {
-//        Example example = new Example(Stock. class);
-//        Example.Criteria criteria = example.createCriteria();
-//        criteria.andEqualTo("name", stockName);
-//        List<Stock> stocks = stockMapper.selectByExample(example);
-//        if (!CollectionUtils.isEmpty(stocks)) {
-//            Stock stock = stocks.get(0);
-//            stock.setStock(stock.getStock() - 1);
-//            stockMapper.updateByPrimaryKey(stock);
-//        }
-//    }
 
     @Override
     public Integer selectStockByName(String stockName) {

@@ -1,7 +1,6 @@
 package com.rasyid.projectprobation.service;
 
 import com.rasyid.projectprobation.dto.StockDTO;
-import com.rasyid.projectprobation.entity.Stock;
 
 import java.util.List;
 

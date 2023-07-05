@@ -1,20 +1,14 @@
 package com.rasyid.projectprobation.controller;
 
-import com.rasyid.projectprobation.config.MyRabbitMQConfig;
 import com.rasyid.projectprobation.dto.APIResponse;
-import com.rasyid.projectprobation.dto.SmsRequest;
 import com.rasyid.projectprobation.dto.StockDTO;
-import com.rasyid.projectprobation.entity.Stock;
 import com.rasyid.projectprobation.service.RedisService;
-import com.rasyid.projectprobation.service.SmsService;
 import com.rasyid.projectprobation.service.StockService;
 import com.rasyid.projectprobation.util.ValueMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
