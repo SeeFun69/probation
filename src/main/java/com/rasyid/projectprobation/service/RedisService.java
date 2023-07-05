@@ -15,9 +15,6 @@ public class RedisService {
     private final RedisTemplate<String, Object> redisTemplate;
     /**
      * Set the String key-value pair
-     * @param key
-     * @param value
-     * @param millis
      */
     public void put(String key, Object value, long millis) {
         redisTemplate.opsForValue().set(key, value, millis, TimeUnit.MINUTES);
@@ -52,8 +49,6 @@ public class RedisService {
 
     /**
      * Subtract one from the key value of the specified key
-     * @param key
-     * @return
      */
     public Long decrBy(String key) {
         return redisTemplate.opsForValue().decrement(key);

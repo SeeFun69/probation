@@ -24,6 +24,10 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
     public static final String SUCCESS = "Success";
 
+
+    /**
+     * Implementing the register
+     */
     @PostMapping("/register")
     public ResponseEntity<APIResponse> register(@RequestBody @Valid RegisterRequest request) {
 
@@ -37,6 +41,10 @@ public class AuthenticationController {
         log.info("register response {}", ValueMapper.jsonAsString(responseDTO));
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
+
+    /**
+     * Implementing the authenticate login
+     */
     @PostMapping("/authenticate")
     public ResponseEntity<APIResponse> authenticate(@RequestBody @Valid AuthenticationRequest request) {
         AuthenticationResponse response = authenticationService.authenticate(request);

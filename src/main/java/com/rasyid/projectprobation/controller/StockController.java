@@ -35,6 +35,10 @@ public class StockController {
 
     public static final String SUCCESS = "Success";
 
+
+    /**
+     * Adding some product and stock
+     */
     @PostMapping("/stock")
     public ResponseEntity<APIResponse> createNewStock(@RequestBody @Valid StockDTO stockDto) {
 
@@ -52,6 +56,9 @@ public class StockController {
         return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
 
+    /**
+     * Getting All Stock
+     */
     @GetMapping("/stock/all")
     public ResponseEntity<APIResponse> getAllStock(){
         List<StockDTO> getStocks = stockService.getAllStock();
@@ -66,6 +73,9 @@ public class StockController {
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
+    /**
+     * Implementing flash sale, put some stock to redis for limiting stock
+     */
     @PostMapping("/flash/sale/begin")
     public ResponseEntity<?> flashSale(@RequestBody StockDTO stockDTO){
         redisService.put(stockDTO.getName(), stockDTO.getStock(), 10);

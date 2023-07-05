@@ -36,7 +36,6 @@ public class SaleController {
 
     /**
      * Implementing the flash sale feature using Redis and message queues.
-     * @return
      */
     @PostMapping("/sale")
     public ResponseEntity<APIResponse> sale(@RequestBody FlashSaleReq request, @AuthenticationPrincipal UserDetails userDetails) {
@@ -51,20 +50,19 @@ public class SaleController {
                 .build();
 
 
-        if(responseDTO.getStatus().equals(SUCCESS)){
-            var sms = SmsRequest.builder().phoneNumber(myPhoneNumber).message(message).build();
-            smsService.sendSms(sms);
-
-            log.info("SmsController {}", sms);
-        }
+//        if(responseDTO.getStatus().equals(SUCCESS)){
+//            var sms = SmsRequest.builder().phoneNumber(myPhoneNumber).message(message).build();
+//            smsService.sendSms(sms);
+//
+//            log.info("SmsController {}", sms);
+//        }
         return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
 
     /**
      * Implementing a pure database operation for the flash sale functionality
-     * @return
      */
-    @PostMapping("/sale/reguler")
+    @PostMapping("/sale/database")
     public ResponseEntity<APIResponse> saleDataBase(@RequestBody FlashSaleReq request, @AuthenticationPrincipal UserDetails userDetails) {
         String username = userDetails.getUsername();
         String message = orderService.saleReguler(request, username);

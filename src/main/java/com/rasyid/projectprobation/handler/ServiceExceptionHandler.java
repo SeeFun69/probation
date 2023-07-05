@@ -3,9 +3,12 @@ package com.rasyid.projectprobation.handler;
 import com.rasyid.projectprobation.dto.APIResponse;
 import com.rasyid.projectprobation.dto.ErrorDTO;
 import com.rasyid.projectprobation.exception.BusinessException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -20,11 +23,6 @@ import java.util.List;
 @RestControllerAdvice
 public class ServiceExceptionHandler {
 
-//    @Value("${twilio.MY_PHONE_NUMBER}")
-//    private String myPhoneNumber;
-//
-//    private final SmsService smsService;
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public APIResponse<?> handleMethodArgumentException(MethodArgumentNotValidException exception) {
@@ -37,13 +35,6 @@ public class ServiceExceptionHandler {
                 });
         serviceResponse.setStatus("FAILED");
         serviceResponse.setErrors(errors);
-
-//        if(serviceResponse.getStatus().equals("FAILED")){
-//            var sms = SmsRequest.builder().phoneNumber(myPhoneNumber).message(serviceResponse.getErrors().toString()).build();
-//            smsService.sendSms(sms);
-//
-//            log.info("SmsController {}", sms);
-//        }
         return serviceResponse;
     }
 
@@ -63,4 +54,30 @@ public class ServiceExceptionHandler {
         serviceResponse.setErrors(Collections.singletonList(new ErrorDTO("", e.getMessage())));
         return serviceResponse;
     }
+
+//    @ExceptionHandler(AccessDeniedException.class)
+//    @ResponseStatus(HttpStatus.FORBIDDEN)
+//    public APIResponse<?> handleAccessDeniedException(AccessDeniedException exception) {
+//        APIResponse<?> serviceResponse = new APIResponse<>();
+//        serviceResponse.setStatus("FORBIDDEN");
+//        serviceResponse.setErrors(Collections.singletonList(new ErrorDTO("", "You do not have permission to access this resource")));
+//        return serviceResponse;
+//    }
+//
+//    @ExceptionHandler(ExpiredJwtException.class)
+//    public APIResponse<?> handleExpiredJwtException(ExpiredJwtException exception) {
+//        APIResponse<?> serviceResponse = new APIResponse<>();
+//        serviceResponse.setStatus("UNAUTHORIZED");
+//        serviceResponse.setErrors(Collections.singletonList(new ErrorDTO("", "Token has expired")));
+//        return serviceResponse;
+//    }
+
+//    @ExceptionHandler(JwtException.class)
+//    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+//    public APIResponse<?> handleJwtException(JwtException exception) {
+//        APIResponse<?> serviceResponse = new APIResponse<>();
+//        serviceResponse.setStatus("UNAUTHORIZED");
+//        serviceResponse.setErrors(Collections.singletonList(new ErrorDTO("", "Invalid token")));
+//        return serviceResponse;
+//    }
 }
